@@ -1,0 +1,33 @@
+.verify-artworks {
+  padding: 20px;
+}
+
+.artwork-card {
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.artwork-actions {
+  margin-top: 10px;
+}
+
+.accept-btn, .delete-btn {
+  padding: 10px 15px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.accept-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+

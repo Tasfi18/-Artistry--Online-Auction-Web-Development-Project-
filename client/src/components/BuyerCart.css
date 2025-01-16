@@ -1,0 +1,41 @@
+.cart-container {
+    text-align: center;
+    margin: 20px auto;
+    max-width: 800px;
+  }
+  
+  h1 {
+    color: #333;
+  }
+  
+  .auction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  
+  .auction-table th, .auction-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .auction-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+  .claim-button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .claim-button:hover {
+    background-color: #45a049;
+  }
+  

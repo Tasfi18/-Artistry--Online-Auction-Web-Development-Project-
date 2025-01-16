@@ -1,0 +1,15 @@
+.verify-artwork-details {
+    padding: 20px;
+  }
+  .verify-artwork-details {
+    padding: 20px;
+  }
+  
+  .artwork-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }

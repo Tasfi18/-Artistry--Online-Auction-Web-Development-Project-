@@ -1,0 +1,40 @@
+.signin-container {
+    margin: 50px auto;
+    padding: 20px;
+    max-width: 400px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+  }
+  
+  .signin-container h1 {
+    text-align: center;
+  }
+  
+  .signin-container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signin-container label {
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  
+  .signin-container input, .signin-container select {
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  
+  .signin-container button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .signin-container button:hover {
+    background-color: #0056b3;
+  }
+  

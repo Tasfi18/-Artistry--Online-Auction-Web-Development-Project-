@@ -1,0 +1,82 @@
+
+.upload-artwork-final {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  
+  .upload-artwork-final h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+ 
+  .upload-artwork-final .artwork-info {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .upload-artwork-final .artwork-info p {
+    margin: 8px 0;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .upload-artwork-final .artwork-info p strong {
+    color: #333;
+  }
+  
+ 
+  .upload-artwork-final input[type="file"] {
+    display: block;
+    margin: 10px 0 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+
+  .upload-artwork-final button {
+    display: inline-block;
+    width: calc(50% - 10px);
+    margin: 0 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .upload-artwork-final button:hover {
+    background-color: #0056b3;
+  }
+
+  .upload-artwork-final button:last-of-type {
+    background-color: #dc3545;
+  }
+  
+  .upload-artwork-final button:last-of-type:hover {
+    background-color: #a71d2a;
+  }
+
+  .upload-artwork-final p {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+  }
+  

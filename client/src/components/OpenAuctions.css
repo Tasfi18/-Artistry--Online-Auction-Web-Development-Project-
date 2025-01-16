@@ -1,0 +1,106 @@
+.open-auctions {
+  text-align: center;
+  margin: 40px auto;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.auction-slide {
+  position: relative;
+  padding: 20px;
+}
+
+.auction-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  max-height: 400px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.auction-image:hover {
+  transform: scale(1.05); 
+}
+
+h3 {
+  margin-top: 10px;
+  font-size: 1.8rem;
+  color: #555;
+}
+
+.view-more-btn {
+  display: inline-block;
+  margin-top: 50px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: #c70f0f;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.view-more-btn:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .auction-image {
+    max-height: 250px;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .view-more-btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+    margin-top: 40px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .auction-image {
+    max-height: 300px;
+  }
+
+  .view-more-btn {
+    margin-top: 45px;
+  }
+}
+
+
+.image-container {
+  position: relative;
+  width: 300px; /* Set width for the container */
+}
+
+.image-container img {
+  width: 100%; /* Image takes full container width */
+  height: auto;
+  border-radius: 10px;
+}
+
+.overlay-text {
+  position: absolute;
+  font-size: 3rem;
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds shadow for readability */
+}
+

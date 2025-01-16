@@ -1,0 +1,30 @@
+.admin-control-panel {
+    max-width: 600px;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  .admin-control-panel h2 {
+    margin-bottom: 20px;
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  button {
+    padding: 15px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
