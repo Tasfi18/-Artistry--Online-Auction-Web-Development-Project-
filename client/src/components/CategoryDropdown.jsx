@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api';
 
 const CategoryDropdown = ({ onChange }) => {
   const [categories, setCategories] = useState([]);
@@ -9,7 +10,7 @@ const CategoryDropdown = ({ onChange }) => {
    
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/categories');
+        const response = await axios.get(`${API_URL}/api/categories`);
         setCategories(response.data); 
         setLoading(false); 
       } catch (error) {

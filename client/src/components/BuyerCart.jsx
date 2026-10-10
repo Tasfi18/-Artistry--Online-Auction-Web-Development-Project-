@@ -2,6 +2,7 @@
     import { useParams } from 'react-router-dom';
     import axios from 'axios';
     import './BuyerCart.css';
+import { API_URL } from '../api';
 
     const Cart = () => {
     const { buyerID } = useParams();
@@ -13,7 +14,7 @@
         const fetchClosedAuctions = async () => {
         try {
             console.log("buyerID:", buyerID);
-            const response = await axios.get(`http://localhost:8000/api/buyers/cart/${buyerID}`);
+            const response = await axios.get(`${API_URL}/api/buyers/cart/${buyerID}`);
             setAuctions(response.data);
             setLoading(false);
         } catch (err) {
@@ -28,7 +29,7 @@
     const handleClaim = async (auctionID) => {
         try {
 
-        //await axios.post(`http://localhost:8000/api/auctions/claim`, { auctionID });
+        //await axios.post(`${API_URL}/api/auctions/claim`, { auctionID });
         alert('Product is on the way!!');
         } catch (err) {
         alert('Error claiming the auction');

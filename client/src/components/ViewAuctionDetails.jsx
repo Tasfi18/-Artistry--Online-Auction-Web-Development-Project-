@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
+import { API_URL } from '../api';
 
 const ViewAuctionDetails = () => {
   const { loggedinfo} = useAuth();
@@ -16,7 +17,7 @@ const ViewAuctionDetails = () => {
   useEffect(() => {
     const fetchAuctionDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/auctions/${id}`);
+        const response = await axios.get(`${API_URL}/api/auctions/${id}`);
         setAuction(response.data[0]); 
         setLoading(false);
       } catch (err) {

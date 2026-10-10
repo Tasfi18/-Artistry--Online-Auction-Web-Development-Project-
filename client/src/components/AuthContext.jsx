@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../api';
 
 const AuthContext = createContext();
 
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchLoggedInfo = async () => {
     try {
-      const res = await axios.get('http://localhost:8000/api/loggedin');
+      const res = await axios.get(`${API_URL}/api/loggedin`);
       if (res.data && res.data.length > 0) {
         setLoggedInfo(res.data[0]);
       } else {
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (data) => {
     setLoggedInfo(data);
     try{
-     await axios.post('http://localhost:8000/api/loggedin',data);
+     await axios.post(`${API_URL}/api/loggedin`,data);
      
     } catch (err) {
       console.error('Failed to fetch login info:', err);
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:8000/api/loggedin/signout');
+      await axios.post(`${API_URL}/api/loggedin/signout`);
       setLoggedInfo(null);
     } catch (err) {
       console.error('Error logging out:', err);

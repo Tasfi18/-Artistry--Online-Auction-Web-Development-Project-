@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './UploadArtworksFinal.css'; 
+import { API_URL } from '../api';
 
 const UploadArtworkFinal = () => {
   const { artistID, artworkID } = useParams();
@@ -12,7 +13,7 @@ const UploadArtworkFinal = () => {
   useEffect(() => {
     const fetchArtworkDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/artworks/${artworkID}`);
+        const response = await axios.get(`${API_URL}/api/artworks/${artworkID}`);
         setArtworkDetails(response.data);
       } catch (error) {
         console.error('Error fetching artwork details:', error);
@@ -37,7 +38,7 @@ const UploadArtworkFinal = () => {
     formData.append('artworkID', artworkID);
 
     try {
-      await axios.post('http://localhost:8000/api/artworks/upload-image', formData);
+      await axios.post(`${API_URL}/api/artworks/upload-image`, formData);
       alert('Image uploaded successfully!');
       navigate(`/user/artists/${artistID}/artworks`);
     } catch (error) {
@@ -48,7 +49,7 @@ const UploadArtworkFinal = () => {
 
   const handleCancel = async () => {
     try {
-      await axios.delete(`http://localhost:8000/api/artworks/${artworkID}`);
+      await axios.delete(`${API_URL}/api/artworks/${artworkID}`);
       alert('Artwork deleted successfully!');
       navigate('/user/artists/${artistID}/artworks');
     } catch (error) {

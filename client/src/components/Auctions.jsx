@@ -16,6 +16,7 @@ import wallowingBreeze from '../assets/images/wallowing-breeze.png'; // Adjust t
 import jResistance from '../assets/images/j-resistance.png';
 import warmBasket from '../assets/images/warm-basket.png';
 import theVonnegut from '../assets/images/the-vonnegut.png';
+import { API_URL } from '../api';
 
 const auctionItems = [
   { id: 1, image: wallowingBreeze, title: 'Wallowing Breeze', artist: 'Hettie Richards', year: '2008', medium: 'Oil on canvas', size: '26 in x 23 in', price: '$620' },
@@ -29,7 +30,7 @@ const auctionItems = [
   useEffect(() => {
     const fetchAllAuctions = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/auctions/active");
+        const res = await axios.get(`${API_URL}/api/auctions/active`);
         setAuctions(res.data); 
         console.log(res.data); 
         setLoading(false); 

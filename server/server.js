@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors')
 
@@ -42,8 +43,8 @@ app.get('/',(req,res)=>{
     res.send("this is main page");
 })
 
-port = 8000
-app.listen(process.env.PORT||port,()=>{
-    console.log(`connected to port ${port}`);
+const port = Number(process.env.PORT) || 8000;
+app.listen(port, () => {
+    console.log(`Server listening on http://localhost:${port}`);
 });
 

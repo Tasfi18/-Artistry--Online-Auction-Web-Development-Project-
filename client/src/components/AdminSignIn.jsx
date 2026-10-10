@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './AdminSignIn.css';
+import { API_URL } from '../api';
 
 const AdminSignIn = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const AdminSignIn = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:8000/api/admin/login', { email, password });
+      const response = await axios.post(`${API_URL}/api/admin/login`, { email, password });
       if (response.data.success) {
         localStorage.setItem('adminToken', response.data.token);
         navigate('/admin/controlpanel');

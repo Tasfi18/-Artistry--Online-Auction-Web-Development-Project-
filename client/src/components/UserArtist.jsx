@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './UserArtist.css';  
 import Upload from './Upload';
+import { API_URL } from '../api';
 const UserArtist = () => {
   const { artistID } = useParams();  
   const [artist, setArtist] = useState(null);  
@@ -11,7 +12,7 @@ const UserArtist = () => {
   useEffect(() => {
     const fetchArtistDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/artists/user/${artistID}`);
+        const response = await axios.get(`${API_URL}/api/artists/user/${artistID}`);
         setArtist(response.data[0]);  
       } catch (error) {
         console.error('Error fetching artist details:', error);

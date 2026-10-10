@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './BuyerAuction.css';
+import { API_URL } from '../api';
 
 const Auction = () => {
 const { buyerID } = useParams();
@@ -15,7 +16,7 @@ useEffect(() => {
     const fetchClosedAuctions = async () => {
     try {
         console.log("buyerID:", buyerID);
-        const response = await axios.get(`http://localhost:8000/api/buyers/auction/${buyerID}`);
+        const response = await axios.get(`${API_URL}/api/buyers/auction/${buyerID}`);
         setAuctions(response.data);
         setLoading(false);
     } catch (err) {
@@ -30,7 +31,7 @@ useEffect(() => {
 const handleClaim = async (auctionID) => {
     try {
 
-    //await axios.post(`http://localhost:8000/api/auctions/claim`, { auctionID });
+    //await axios.post(`${API_URL}/api/auctions/claim`, { auctionID });
     navigate(`/auction/${auctionID}`)
     } catch (err) {
     alert('Error going to the auction');

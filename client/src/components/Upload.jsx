@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 import './Upload.css';
+import { API_URL } from '../api';
 
 const Upload = () => {
     const { loggedinfo} = useAuth();
@@ -15,13 +16,13 @@ const Upload = () => {
         formData.append('ID', loggedinfo.ID)
         if(loggedinfo.UserType == 'buyer'){
 
-            axios.post('http://localhost:8000/api/upload/buyer',formData )
+            axios.post(`${API_URL}/api/upload/buyer`,formData )
             .then( res => {})
             .catch(er => console.log(er))
             location.reload()
         }
         else if(loggedinfo.UserType == 'artist'){
-            axios.post('http://localhost:8000/api/upload/artist', formData, {
+            axios.post(`${API_URL}/api/upload/artist`, formData, {
                 timeout: 5000 
               }) 
             .then( res => {})

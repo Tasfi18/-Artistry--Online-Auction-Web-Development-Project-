@@ -3,7 +3,7 @@ import Slider from 'react-slick';
 import { useNavigate } from 'react-router-dom';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import  "../Index.css"; 
+import "../index.css"; 
 
 
 import auction1 from '../assets/images/auction1.png';

@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db_connection/Connect_db');
-const router = express.Router(); 
+const router = express.Router();
+const { evaluateBid } = require('../lib/bids');
 
 //things to implement : api/auction/ call korle start time er agey "pending" thakbe ar pore active thakbe
 
@@ -76,8 +77,7 @@ router.get('/active/:categoryID', (req, res) => {
           SELECT a.* 
           FROM auction a
           JOIN artwork aw ON a.ArtworkID = aw.ArtworkID
-          WHERE a.AuctionStatus = 'active' 
-          AND AuctionStatus = 'pending'
+          WHERE a.AuctionStatus IN ('active', 'pending')
           AND aw.CategoryID = ?
       `;
       db.query(query, [categoryID], (err, results) => {
@@ -124,117 +124,62 @@ router.get('/:auctionId', (req, res) => {
   });
 }); 
 
-  router.post('/:auctionId/bid', (req, res) => {
+router.post('/:auctionId/bid', (req, res) => {
+  const { auctionId } = req.params;
+  const { BuyerID, BidAmount } = req.body;
+  if (!BuyerID) return res.status(400).json({ message: 'BuyerID is required.' });
 
-    const timeExpirationQuery = "UPDATE auction SET AuctionStatus = 'closed' WHERE EndTime < NOW()"
-    db.query(timeExpirationQuery, (err, results) => {
-      if (err) return res.status(500).json(err);
-    });
+  // Bring statuses up to date first: close finished auctions, open ones that have started.
+  const refreshStatuses = `
+    UPDATE auction
+    SET AuctionStatus = CASE
+      WHEN EndTime < NOW() THEN 'closed'
+      WHEN AuctionStatus = 'pending' AND StartTime <= NOW() THEN 'active'
+      ELSE AuctionStatus
+    END
+    WHERE AuctionID = ?`;
+  db.query(refreshStatuses, [auctionId], (err) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-    const pendingCheckQuery = "SELECT AuctionID, StartTime, AuctionStatus FROM auction WHERE AuctionStatus = 'pending'";
-    db.query(pendingCheckQuery, [], (err, result) => {
+    const auctionQuery = `
+      SELECT a.EndTime, a.AuctionStatus, a.HighestBid,
+             (SELECT MAX(BidAmount) FROM bid WHERE AuctionID = a.AuctionID) AS MaxBid
+      FROM auction a WHERE a.AuctionID = ?`;
+    db.query(auctionQuery, [auctionId], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (rows.length === 0) return res.status(404).json({ message: 'Auction not found.' });
+
+      const { EndTime, AuctionStatus, HighestBid, MaxBid } = rows[0];
+      const decision = evaluateBid({
+        auctionStatus: AuctionStatus,
+        endTime: EndTime,
+        highestBid: HighestBid,
+        maxBid: MaxBid,
+        bidAmount: BidAmount,
+      });
+      if (!decision.ok) return res.status(decision.status).json({ message: decision.message });
+
+      const insertBid = 'INSERT INTO bid (AuctionID, BuyerID, BidAmount, BidTime) VALUES (?, ?, ?, NOW())';
+      db.query(insertBid, [auctionId, BuyerID, decision.amount], (err) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (result.length > 0) {
 
-          const currentTime = new Date();
-          result.forEach(auction => {
-              const { AuctionID, StartTime } = auction;
-              if (currentTime >= new Date(StartTime)) {
-                  const updateStatusQuery = "UPDATE auction SET AuctionStatus = 'active' WHERE AuctionID = ?";
-                  
-                  db.query(updateStatusQuery, [AuctionID], (err, updateResult) => {
-                      if (err) return res.status(500).json({ error: err.message });
-                      console.log(`AuctionID ${AuctionID} has been set to 'active' from bid.`);
-                  });
-              }
-          });
-
-
-
-        }
-    
-          
-    
+        const updateAuction = 'UPDATE auction SET HighestBid = ?, WinnerID = ? WHERE AuctionID = ?';
+        db.query(updateAuction, [decision.amount, BuyerID, auctionId], (err) => {
+          if (err) return res.status(500).json({ error: err.message });
+          res.status(201).json({ message: 'Bid placed.', highestBid: decision.amount });
+        });
+      });
     });
-  
-
-    const { auctionId } = req.params;
-    const { BuyerID, BidAmount } = req.body;
-    //const auctionId = 1; 
-    //const buyerId = 2;   
-    //const newBidAmount = 700000; 
-    const auctionStatusQuery = 'SELECT EndTime, AuctionStatus FROM auction WHERE AuctionID = ?';
-    db.query(auctionStatusQuery, [auctionId], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (result.length === 0) return res.status(404).json({ message: 'Auction not found.' });
-
-        const { EndTime, AuctionStatus} = result[0];
-        const currentTime = new Date();
-        if(AuctionStatus == 'pending'){
-          return res.status(400).json({ message: 'Auction is not online.' });
-        }
-        else{
-          if (currentTime > EndTime || AuctionStatus == 'closed') {        
-            newAucStatQuery = 'UPDATE auction set AuctionStatus = ? where AuctionID = ?;'
-            db.query(newAucStatQuery,["closed",auctionId],(err,result)=>{
-              if(err) return res.status(500).json(err);
-              return res.status(400).json({ message: 'Auction is closed. No more bids allowed.' });
-
-            })   
-            
-          }
-          const HighestBidQuery = 'SELECT HighestBid AS sb FROM auction where AuctionID = ?';
-          db.query(HighestBidQuery,[auctionId],(err,result) =>{
-            if (err) return res.status(500).json(err);
-            const HighestBid = result[0].sb;
-            
-            if(BidAmount>HighestBid){
-                const maxBidQuery = 'SELECT MAX(BidAmount) AS maxBidAmount FROM bid WHERE AuctionID = ?';
-            
-                db.query(maxBidQuery, [auctionId], (err, result) => {
-                    if (err) throw err;
-        
-                    const maxBidAmount = result[0].maxBidAmount || 0; 
-                    console.log(maxBidAmount)
-                    if (BidAmount > maxBidAmount) {
-                        const insertBidQuery = 'INSERT INTO bid (AuctionID, BuyerID, BidAmount, BidTime) VALUES (?, ?, ?, NOW())';
-                        db.query(insertBidQuery, [auctionId, BuyerID, BidAmount], (err, result) => {
-                            if (err) throw err;
-                            console.log('New bid inserted successfully.');
-                            const updateAuctionQuery = 'UPDATE auction SET HighestBid = ?, WinnerID = ? WHERE AuctionID = ?';
-                            db.query(updateAuctionQuery, [BidAmount, BuyerID, auctionId], (err, result) => {
-                                if (err) return res.status(500).json({ error: err.message });
-                                
-                                console.log('Auction table updated with new highest bid and winner.');
-                                console.log('Bid placed successfully and auction updated.');
-                            });
-                        });
-                    } else {
-                        console.log('Bid amount is too low.');
-                        res.status(201).json({ message: 'Bid amount is too low.' });
-                    }
-                });
-            }
-            else{
-              console.log('lower than Highest bid.');
-              res.status(201).json({ message: 'lower than Highest bid.' });
-            }                   
-
-          }); 
-
-        }
-           
-    });
-
+  });
 });
 
   router.post('/:artworkID/new', (req, res) => {
     const { artworkID } = req.params;
-    AuctionStatus = 'active';
-   // const {  StartTime, EndTime,HighestBid } = req.body;
-     StartTime = '2024-10-15 04:59:24';
-     EndTime = '2024-10-15 05:39:24';
-     StartingBid = 222;
+    const AuctionStatus = 'active';
+    // Test helper: creates a short sample auction with fixed values.
+    const StartTime = '2024-10-15 04:59:24';
+    const EndTime = '2024-10-15 05:39:24';
+    const StartingBid = 222;
      
     const query = 'INSERT INTO auction (ArtworkID, StartTime, EndTime,StartingBid,AuctionStatus) VALUES (?, ?, ?, ?, ?)';
     db.query(query, [artworkID, StartTime, EndTime,StartingBid,AuctionStatus], (err, result) => {

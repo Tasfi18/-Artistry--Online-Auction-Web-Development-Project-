@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db_connection/Connect_db');
-const router = express.Router(); 
+const router = express.Router();
+const { hashPassword, verifyPassword, withoutPassword } = require('../lib/passwords');
 
 router.get('/user/:buyerID', (req, res) => {
     
@@ -8,7 +9,7 @@ router.get('/user/:buyerID', (req, res) => {
     const query = "SELECT * FROM buyer WHERE BuyerID = ?";
     db.query(query, [buyerID], (err, result) => {
       if (err) return res.status(500).json(err);
-      res.json(result);
+      res.json(result.map(withoutPassword));
     });
 });
 router.get('/email', (req, res) => {
@@ -22,11 +23,15 @@ router.get('/email', (req, res) => {
   
 router.post('/signin', (req, res) => {
     const { email, password } = req.body;
-    const query = "SELECT BuyerID FROM buyer WHERE Email = ? AND Password = ?";
+    if (!email || !password) return res.status(400).json({ message: 'Email and password are required.' });
 
-    db.query(query, [email, password], (err, result) => {
+    const query = "SELECT BuyerID, Password FROM buyer WHERE Email = ?";
+
+    db.query(query, [email], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (result.length === 0) return res.status(401).json({ message: 'Invalid credentials.' });
+        if (result.length === 0 || !verifyPassword(password, result[0].Password)) {
+            return res.status(401).json({ message: 'Invalid credentials.' });
+        }
 
         const buyerID = result[0].BuyerID;
         res.json({ message: 'Sign-in successful', buyerID });  
@@ -36,18 +41,20 @@ router.post('/signin', (req, res) => {
 
 
 router.post('/signup', (req, res) => {
-    const { buyerID } = req.params;
     const { name, email,  password, shippingAddress, businessDetails, yearlyWage } = req.body;
-    approvalStatus = "approved"
+    if (!name || !email || !password) {
+        return res.status(400).json({ message: 'Name, email and password are required.' });
+    }
+    const approvalStatus = "approved";
     const query = `
         INSERT INTO buyer ( Name, Email,  Password, ShippingAddress, BusinessDetails, YearlyWage, ApprovalStatus)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    const values = [ name, email,  password, shippingAddress, businessDetails, yearlyWage, approvalStatus];
+    const values = [ name, email,  hashPassword(password), shippingAddress, businessDetails, yearlyWage, approvalStatus];
     
     db.query(query, values, (err, result) => {
-        if (err) return res.status(500).json(err);
-        res.status(201).json({ message: 'Buyer created successfully', result });
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ message: 'Buyer created successfully', buyerID: result.insertId });
     });
 });
 

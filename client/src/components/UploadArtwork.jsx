@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import CategoryDropdown from './CategoryDropdown';
 import './UploadArtwork.css';
+import { API_URL } from '../api';
 
 const UploadArtwork = () => {
   const { artistID } = useParams();
@@ -27,7 +28,7 @@ const UploadArtwork = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8000/api/artworks/upload', artworkData);
+      const response = await axios.post(`${API_URL}/api/artworks/upload`, artworkData);
       const { artworkID } = response.data; 
       alert('Artwork uploaded successfully!');
       navigate(`/artists/${artistID}/upload-artwork/${artworkID}`);

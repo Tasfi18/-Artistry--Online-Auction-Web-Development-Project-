@@ -6,6 +6,7 @@ import { useAuth } from './AuthContext';
 
 
 import SignIn from "./SignIn";
+import { API_URL } from '../api';
 
 const SignUp = () => {
   const { login } = useAuth();
@@ -44,7 +45,7 @@ const SignUp = () => {
     const data = { email, password };
 
     try {
-      const emailCheckResponse = await axios.post(`http://localhost:8000/api/emails/check-email`, { email });
+      const emailCheckResponse = await axios.post(`${API_URL}/api/emails/check-email`, { email });
       if (emailCheckResponse.data.message !== 'Email is available.') {
         setEmailError(emailCheckResponse.data.message);
         return;
@@ -60,21 +61,21 @@ const SignUp = () => {
 
     try {
       if (userType === 'artist') {
-        await axios.post(`http://localhost:8000/api/artists/signup`, dataArtist);
+        await axios.post(`${API_URL}/api/artists/signup`, dataArtist);
       } else if (userType === 'buyer') {
-        await axios.post(`http://localhost:8000/api/buyers/signup`, dataBuyer);
+        await axios.post(`${API_URL}/api/buyers/signup`, dataBuyer);
       }
       alert('Sign-up successful!');
       let response;
       if (userType === 'artist') {
-        response = await axios.post(`http://localhost:8000/api/artists/signin`, data);
+        response = await axios.post(`${API_URL}/api/artists/signin`, data);
         const userData = { ID: response.data.artistID, Status: 1, UserType: 'artist' };
         await login(userData);
         navigate(`/user/artist/${userData.ID}`);
 
 
       } else if (userType === 'buyer') {
-        response = await axios.post(`http://localhost:8000/api/buyers/signin`, data);
+        response = await axios.post(`${API_URL}/api/buyers/signin`, data);
         const userData = { ID: response.data.buyerID, Status: 1, UserType: 'buyer' };
         await login(userData);
         navigate(`/user/buyer/${userData.ID}`);
