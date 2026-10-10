@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db_connection/Connect_db');
-const router = express.Router(); 
+const router = express.Router();
+const { hashPassword, verifyPassword, withoutPassword } = require('../lib/passwords');
 
 router.get('/user/:artistID', (req, res) => {
     
@@ -8,7 +9,7 @@ router.get('/user/:artistID', (req, res) => {
       const query = "SELECT * FROM artist WHERE ArtistID = ?";
       db.query(query, [artistID], (err, result) => {
         if (err) return res.status(500).json(err);
-        res.json(result);
+        res.json(result.map(withoutPassword));
       });
 });
 router.get('/email', (req, res) => {
@@ -23,11 +24,13 @@ router.get('/email', (req, res) => {
 router.post('/signin', (req, res) => {
     const { email, password } = req.body;
     
-    const query = "SELECT ArtistID FROM artist WHERE Email = ? AND Password = ?";
-    db.query(query, [email, password], (err, result) => {
+    if (!email || !password) return res.status(400).json({ error: 'Email and password are required' });
+
+    const query = "SELECT ArtistID, Password FROM artist WHERE Email = ?";
+    db.query(query, [email], (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
       
-      if (result.length === 0) {
+      if (result.length === 0 || !verifyPassword(password, result[0].Password)) {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
   
@@ -39,6 +42,9 @@ router.post('/signin', (req, res) => {
 
   router.post('/signup', (req, res) => {
      const {name , email, password, bio, portfolioURL } = req.body;
+     if (!name || !email || !password) {
+         return res.status(400).json({ error: 'Name, email and password are required' });
+     }
      const approvalStatus = "approved";  
   
      const query = `
@@ -46,11 +52,11 @@ router.post('/signin', (req, res) => {
          VALUES (?, ?, ?, ?, ?, ?)
      `;
   
-     const values = [name, email, password, bio, portfolioURL, approvalStatus];
+     const values = [name, email, hashPassword(password), bio, portfolioURL, approvalStatus];
   
      db.query(query, values, (err, result) => {
-         if (err) return res.status(500).json({ error: err });
-         res.status(201).json({ message: 'Artist created successfully', result });
+         if (err) return res.status(500).json({ error: err.message });
+         res.status(201).json({ message: 'Artist created successfully', artistID: result.insertId });
      });
   });
 

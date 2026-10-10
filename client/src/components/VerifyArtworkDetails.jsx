@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './VerifyArtworkDetails.css';
+import { API_URL } from '../api';
 
 const VerifyArtworkDetails = () => {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ const VerifyArtworkDetails = () => {
   useEffect(() => {
     const fetchArtworkDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/artworks/${artworkID}`);
+        const response = await axios.get(`${API_URL}/api/artworks/${artworkID}`);
         setArtwork(response.data);
         setStartingBid(response.data.BasePrice); 
       } catch (error) {
@@ -47,7 +48,7 @@ const VerifyArtworkDetails = () => {
     };
     console.log(auctionData)
     try {
-      await axios.post('http://localhost:8000/api/auctions/create', auctionData);
+      await axios.post(`${API_URL}/api/auctions/create`, auctionData);
       alert('Auction created successfully!');
       navigate('/admin/controlpanel');
     } catch (error) {

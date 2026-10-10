@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './UserBuyerPublic.css';
 import Upload from './Upload';
+import { API_URL } from '../api';
 
 const UserBuyer = () => {
   const { buyerID } = useParams();
@@ -12,7 +13,7 @@ const UserBuyer = () => {
   useEffect(() => {
     const fetchBuyerDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/buyers/user/${buyerID}`);
+        const response = await axios.get(`${API_URL}/api/buyers/user/${buyerID}`);
         setBuyer(response.data[0]);
       } catch (error) {
         console.error('Error fetching buyer details:', error);

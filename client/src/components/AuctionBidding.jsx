@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from './AuthContext';
 import './AuctionBidding.css';
+import { API_URL } from '../api';
 
 const AuctionBidding = () => {
   const { loggedinfo} = useAuth();
@@ -17,7 +18,7 @@ const AuctionBidding = () => {
   useEffect(() => {
     const fetchAuctionDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/auctions/${id}`);
+        const response = await axios.get(`${API_URL}/api/auctions/${id}`);
         const auctionData = response.data[0]; 
         setAuction(auctionData); 
         setHighestBid(auctionData.HighestBid || 0); 
@@ -34,7 +35,7 @@ const AuctionBidding = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); 
-    if (newBid > highestBid) {
+    if (Number(newBid) > Number(highestBid)) {
       //location.reload()
       const BuyerID = loggedinfo.ID
       const BidAmount = newBid
@@ -48,16 +49,15 @@ const AuctionBidding = () => {
         alert("Auction is Closed!!")
         navigate('/auctions')
       } else {
+        // Wait for the server to accept the bid before reloading the page.
+        await axios.post(`${API_URL}/api/auctions/${id}/bid`, data)
         setHighestBid(newBid);
         alert(`Your bid of $${newBid} was successfully submitted!`);
         location.reload()
-        await axios.post(`http://localhost:8000/api/auctions/${id}/bid`,{BuyerID,BidAmount})      
-          
       }
     
     } catch (err) {
-      setError('Error submitting bid'); 
-      setLoading(false);
+      alert(err.response?.data?.message || 'Error submitting bid');
     }
     } else {
       alert('Your bid must be higher than the current highest bid.');

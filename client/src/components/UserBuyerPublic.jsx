@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './UserBuyer.css';  
+import { API_URL } from '../api';
 
 const UserBuyerPublic = () => {
   const { buyerID } = useParams();  
@@ -10,7 +11,7 @@ const UserBuyerPublic = () => {
   useEffect(() => {
     const fetchBuyerDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/buyers/user/${buyerID}`);
+        const response = await axios.get(`${API_URL}/api/buyers/user/${buyerID}`);
         setBuyer(response.data[0]);  
       } catch (error) {
         console.error('Error fetching buyer details:', error);

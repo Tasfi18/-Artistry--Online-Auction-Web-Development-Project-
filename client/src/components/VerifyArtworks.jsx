@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './VerifyArtworks.css';
+import { API_URL } from '../api';
 
 const VerifyArtworks = () => {
   const [pendingArtworks, setPendingArtworks] = useState([]);
@@ -10,7 +11,7 @@ const VerifyArtworks = () => {
   useEffect(() => {
     const fetchPendingArtworks = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/artworks/pending');
+        const response = await axios.get(`${API_URL}/api/artworks/pending`);
         setPendingArtworks(response.data);
       } catch (error) {
         console.error('Error fetching pending artworks:', error);
@@ -26,7 +27,7 @@ const VerifyArtworks = () => {
 
   const handleDelete = async (artworkID) => {
     try {
-      await axios.delete(`http://localhost:8000/api/artworks/${artworkID}`);
+      await axios.delete(`${API_URL}/api/artworks/${artworkID}`);
       alert('Artwork deleted successfully!');
       setPendingArtworks((prev) => prev.filter((artwork) => artwork.ArtworkID !== artworkID));
     } catch (error) {
